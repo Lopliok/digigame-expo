@@ -1,40 +1,29 @@
 import * as React from "react";
-import { Text, StyleSheet, View, Button, TextInput } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  View,
+  TextInput,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
+import { Button } from "galio-framework";
 import { useQuery } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
 
 import { useMutation } from "@apollo/react-hooks";
 import { withContext } from "../context/Store";
 import { IContext, Stores } from "../context/index";
+import { ActivityIndicator } from "react-native-paper";
+import { useLoginMutation } from "../generated/graphql";
 
-const EXCHANGE_RATES = gql`
-  {
-    posts {
-      title
-      id
-      body
-      author {
-        id
-        email
-      }
-    }
-  }
-`;
+interface Props extends IContext {
+  navigation: any;
+}
 
-const ADD_TODO = gql`
-  mutation login($email: String!, $password: String!) {
-    login(loginInput: { email: $email, password: $password }) {
-      email
-      id
-    }
-  }
-`;
-
-interface Props extends IContext {}
-
-function LoginScreen({ context }: Props) {
+function LoginScreen({ context, navigation }: Props) {
   const [state, setState] = React.useState({ email: "", password: "" });
-  const [addTodo] = useMutation(ADD_TODO);
+  const [addTodo, loginClient] = useLoginMutation();
 
   const login = async () => {
     try {
@@ -51,30 +40,62 @@ function LoginScreen({ context }: Props) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.form}>
-        <Text style={styles.heading}>Přihlášení</Text>
+    <TouchableWithoutFeedback
+      style={{ width: "100%", height: "50%" }}
+      onPress={Keyboard.dismiss}
+    >
+      <View style={styles.container}>
+        {loginClient.loading ? (
+          <View>
+            <ActivityIndicator size="large" color="#00ff00" />
+            <Text style={{ paddingTop: 30 }}>Přihlašování</Text>
+          </View>
+        ) : (
+          <>
+            <View style={styles.form}>
+              <Text style={styles.heading}>Přihlášení</Text>
+              <TextInput
+                onChangeText={(text) => {
+                  setState({ ...state, email: text });
+                }}
+                style={styles.input}
+                autoCompleteType="email"
+                textContentType="emailAddress"
+                placeholder="Email"
+              />
+              <TextInput
+                textContentType="password"
+                autoCompleteType="password"
+                secureTextEntry={true}
+                onChangeText={(text) => {
+                  setState({ ...state, password: text });
+                }}
+                style={styles.input}
+                placeholder="Heslo"
+              />
+              <Button style={{ width: "100%" }} onPress={login} color="success">
+                Přihlásit
+              </Button>
+            </View>
 
-        <TextInput
-          onChangeText={(text) => {
-            setState({ ...state, email: text });
-          }}
-          style={styles.input}
-          textContentType="emailAddress"
-          placeholder="Email"
-        />
-        <TextInput
-          textContentType="password"
-          secureTextEntry={true}
-          onChangeText={(text) => {
-            setState({ ...state, password: text });
-          }}
-          style={styles.input}
-          placeholder="Heslo"
-        />
-        <Button onPress={login} title="Přihlásit"></Button>
+            <View
+              style={{
+                paddingTop: 40,
+              }}
+            >
+              <Button
+                color="#50C7C7"
+                shadowless
+                round
+                onPress={() => navigation.navigate("SignUp")}
+              >
+                Registrace
+              </Button>
+            </View>
+          </>
+        )}
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -85,8 +106,8 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   container: {
-    padding: 30,
-    height: "100%",
+    padding: 20,
+    height: "70%",
     display: "flex",
     alignContent: "center",
     alignItems: "center",

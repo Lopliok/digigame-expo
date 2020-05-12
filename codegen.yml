@@ -1,12 +1,14 @@
 overwrite: true
-schema: "http://localhost:3001/graphql"
-documents: "src/**/*.graphql"
+schema: "https://textgame-be.herokuapp.com/graphql"
+documents: "queries/*.gql"
 generates:
-  src/generated/graphql.tsx:
+  generated/graphql.tsx:
     plugins:
       - "typescript"
       - "typescript-operations"
       - "typescript-react-apollo"
+    config:
+        withHooks: true
   ./graphql.schema.json:
     plugins:
       - "introspection"

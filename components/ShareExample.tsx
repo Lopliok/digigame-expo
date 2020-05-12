@@ -1,7 +1,13 @@
 import React, { Component } from "react";
 import { Share, Button } from "react-native";
+import { Entypo } from "@expo/vector-icons";
 
-export class ShareButton extends Component {
+interface Props {
+  text: string;
+  style: {};
+}
+
+export class ShareButton extends Component<Props> {
   onShare = async () => {
     try {
       const result = await Share.share({
@@ -23,6 +29,13 @@ export class ShareButton extends Component {
   };
 
   render() {
-    return <Button onPress={this.onShare} title="Použít" />;
+    return (
+      <Entypo.Button
+        name="share"
+        onPress={this.onShare}
+        color="black"
+        backgroundColor="white"
+      />
+    );
   }
 }

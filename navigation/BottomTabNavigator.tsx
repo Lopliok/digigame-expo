@@ -1,56 +1,70 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import * as React from "react";
-
+import { Text, View, StyleSheet, Button } from "react-native";
 import TabBarIcon from "../components/TabBarIcon";
-import DigiScreen from "../screens/DigiScreen";
+import { FontAwesome, Feather } from "@expo/vector-icons";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/HomeScreen";
-import LinksScreen from "../screens/LinksScreen";
+import MyPostsScreen from "../screens/MyPostsScreen";
+import { createStackNavigator } from "@react-navigation/stack";
 
-const BottomTab = createBottomTabNavigator();
-const INITIAL_ROUTE_NAME = "Home";
+export type Link = {
+  title: string;
+  address: string;
+  icon: string;
+  action: (item?: any) => {};
+};
 
-export default function BottomTabNavigator({ navigation, route }) {
-  // Set the header title on the parent stack navigator depending on the
-  // currently active tab. Learn more in the documentation:
-  // https://reactnavigation.org/docs/en/screen-options-resolution.html
-  navigation.setOptions({ headerTitle: getHeaderTitle(route) });
-
+export default function BottomTabNavigator({ links }: { links: Link[] }) {
   return (
-    <BottomTab.Navigator initialRouteName={INITIAL_ROUTE_NAME}>
-      <BottomTab.Screen
-        name="Digi"
-        component={DigiScreen}
-        options={{
-          title: "Taháky",
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} name="md-list" />
-          ),
-        }}
-      />
-      <BottomTab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          title: "Tipy",
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} name="md-magnet" />
-          ),
-        }}
-      />
-    </BottomTab.Navigator>
+    <View style={styles.container}>
+      <View style={styles.bar}>
+        {links.map((it) => (
+          <View key={it.title}>
+            <FontAwesome.Button
+              name={it.icon}
+              backgroundColor="red"
+              onPress={it.action}
+            >
+              {it.title}
+            </FontAwesome.Button>
+          </View>
+        ))}
+      </View>
+    </View>
   );
 }
 
-function getHeaderTitle(route) {
-  const routeName =
-    route.state?.routes[route.state.index]?.name ?? INITIAL_ROUTE_NAME;
+/* 
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import HomeScreen from "../screens/HomeScreen";
+import MyPostsScreen from "../screens/MyPostsScreen";
 
-  switch (routeName) {
-    case "Home":
-      return "Home";
-    case "Digi":
-      return "Flirt taháky";
-    case "Links":
-      return "Links to learn more";
-  }
+const Tab = createBottomTabNavigator();
+
+export default function MyTabs() {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="MyPosts" component={MyPostsScreen} />
+    </Tab.Navigator>
+  );
 }
+ */
+const styles = StyleSheet.create({
+  container: {
+    padding: 0,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    width: "100%",
+  },
+  bar: {
+    backgroundColor: "orange",
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-around",
+    flex: 1,
+    flexDirection: "row",
+  },
+});

@@ -1,0 +1,100 @@
+mutation login($email: String!, $password: String!) {
+    login(loginInput: { email: $email, password: $password }) {
+      email
+      id
+    }
+  }
+
+mutation SignUp($email: String!, $password: String!) {
+    signup(signUpInput: { email: $email, password: $password }) {
+      email
+      id
+    }
+  }
+
+
+  query ArticleSections {
+    __typename
+    articleSections {
+      title
+      __typename
+      id
+      articles {
+        __typename
+        id
+        img
+        title
+        section {
+          id
+          title
+        }
+        paragraphs {
+          __typename
+          id
+          body
+        }
+      }
+    }
+  }
+
+  query Article($id: ID!) {
+    __typename
+    article(id: $id) {
+      __typename
+      id
+      title
+      active
+      paragraphs {
+        __typename
+        id
+        body
+      }
+    }
+  }
+
+
+  mutation createPost($body: String, $active: Boolean, $title: String!) {
+    createPost(postInput: { title: $title, body: $body, active: $active }) {
+      __typename
+      author {
+        __typename
+        email
+      }
+      id
+      body
+      active
+      title
+    }
+  }
+
+  query myPosts {
+    __typename
+    myPosts {
+      __typename
+      title
+      body
+      active
+      id
+      author {
+        __typename
+        id
+        email
+      }
+    }
+  }
+
+  query posts{
+    __typename
+    posts {
+      __typename
+      title
+      body
+      active
+      id
+      author {
+        __typename
+        id
+        email
+      }
+    }
+  }

@@ -7,28 +7,40 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Button,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { MonoText } from "../components/StyledText";
 import { gql } from "apollo-boost";
 import { useQuery } from "react-apollo";
+import TextBlock from "../components/TextBlock";
+import AuthLayout from "../layout/AuthLayout";
+import { usePostsQuery } from "../generated/graphql";
+import useGlobalLoader from "../hooks/useGlobalLoader";
 
-const EXCHANGE_RATES = gql`
-  {
-    myPosts {
-      title
-    }
-  }
-`;
-
-const HomeScreen = () => {
-  const { loading, error, data, refetch } = useQuery(EXCHANGE_RATES);
+const HomeScreen = ({ navigation }) => {
+  const { loading, error, data, refetch } = usePostsQuery();
+  useGlobalLoader(loading);
 
   return (
-    <View style={styles.container}>
-      <Text>{data?.myPosts?.[0].title}khkh</Text>
-    </View>
+    <AuthLayout navigation={navigation}>
+      {loading ? (
+        <Text>Loading...</Text>
+      ) : (
+        <>
+          <ScrollView style={styles.container}>
+            {data?.posts?.map((it, i) => (
+              <TextBlock
+                key={it.id}
+                text={it.body}
+                last={i == data.posts.length - 1}
+              />
+            ))}
+          </ScrollView>
+        </>
+      )}
+    </AuthLayout>
   );
 };
 
@@ -38,7 +50,8 @@ HomeScreen.navigationOptions = {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "green",
+    padding: 20,
+    marginBottom: 0,
   },
 });
 

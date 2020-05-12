@@ -5,16 +5,30 @@ import { SplashScreen } from "expo";
 import * as Font from "expo-font";
 import * as React from "react";
 import { ApolloProvider } from "react-apollo";
-import { Platform, StatusBar, StyleSheet, View, Text } from "react-native";
+import {
+  Platform,
+  StatusBar,
+  StyleSheet,
+  View,
+  Text,
+  Vibration,
+  Button,
+} from "react-native";
 import BottomTabNavigator from "./navigation/BottomTabNavigator";
 import useLinking from "./navigation/useLinking";
 import ApolloClient from "apollo-boost";
 import AppWrapper from "./containers/AppWrapper";
 import Router from "./Router";
 import { StoreProvider } from "./context/Store";
+import { Stores } from "./context";
+import { Provider as PaperProvider } from "react-native-paper";
+import theme from "./theme";
+import { Notifications } from "expo";
+import * as Permissions from "expo-permissions";
+import Constants from "expo-constants";
 
 const client = new ApolloClient({
-  uri: "http://10.0.0.65:3001/graphql",
+  uri: "https://textgame-be.herokuapp.com/graphql",
 });
 
 export default function App(props) {
@@ -51,9 +65,18 @@ export default function App(props) {
 
   return (
     <ApolloProvider client={client}>
-      <StoreProvider defaultValue={{ user: { username: null, id: null } }}>
+      <StoreProvider
+        defaultValue={{
+          [Stores.user]: { username: null, id: null },
+          [Stores.myPosts]: { opened: true },
+          [Stores.theory]: { detailID: null },
+          [Stores.loading]: { loading: false },
+        }}
+      >
         <NavigationContainer>
-          <Router />
+          <PaperProvider theme={theme}>
+            <Router />
+          </PaperProvider>
         </NavigationContainer>
       </StoreProvider>
     </ApolloProvider>

@@ -25,6 +25,10 @@
     "ios": {
       "bundleIdentifier": "com.lopliok.textgame",
       "supportsTablet": true
+    },
+    "android": {
+      "package": "com.lopliok.textgame",
+      "versionCode": 1
     }
   }
 }
